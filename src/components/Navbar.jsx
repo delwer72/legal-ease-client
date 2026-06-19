@@ -284,17 +284,18 @@ const Navbar = () => {
             </button>
 
             <Link href="/">
-              <div className="flex items-center gap-2">
-                <Image
-                  src="/logo.webp"
-                  alt="LegalEase"
-                  width={40}
-                  height={40}
-                />
-                <span className="text-xl font-bold text-blue-700">
-                  LegalEase
-                </span>
-              </div>
+            <div className="flex flex-col items-center -mt-8">
+  <Image
+    src="/logo.webp"
+    alt="LegalEase"
+    width={120}
+    height={80}
+  />
+
+  <span className="text-xl font-bold text-blue-700 -mt-10">
+    LegalEase
+  </span>
+</div>
             </Link>
           </div>
 
@@ -326,20 +327,6 @@ const Navbar = () => {
               </Link>
             </li>
 
-            {/* {user && (
-              <li>
-                <Link
-                  href={`/dashboard/${user?.role}`}
-                  className={`font-medium transition ${
-                    pathname.includes("/dashboard")
-                      ? "text-blue-600"
-                      : "hover:text-blue-600"
-                  }`}
-                >
-                  Dashboard
-                </Link>
-              </li>
-            )} */}
            {user && (
   <li className="relative group">
     <button className="font-medium hover:text-blue-600">
