@@ -326,7 +326,7 @@ const Navbar = () => {
               </Link>
             </li>
 
-            {user && (
+            {/* {user && (
               <li>
                 <Link
                   href={`/dashboard/${user?.role}`}
@@ -339,7 +339,93 @@ const Navbar = () => {
                   Dashboard
                 </Link>
               </li>
-            )}
+            )} */}
+           {user && (
+  <li className="relative group">
+    <button className="font-medium hover:text-blue-600">
+      Dashboard ▾
+    </button>
+
+    <div className="absolute left-0 top-full hidden min-w-[220px] rounded-lg border bg-white p-2 shadow-lg group-hover:block">
+      
+      {user?.role === "admin" && (
+        <>
+          <Link
+            href="/dashboard/admin/manage-users"
+            className="block rounded px-3 py-2 hover:bg-gray-100"
+          >
+            Manage Users
+          </Link>
+
+          <Link
+            href="/dashboard/admin/manage-lawyers"
+            className="block rounded px-3 py-2 hover:bg-gray-100"
+          >
+            Manage Lawyers
+          </Link>
+
+          <Link
+            href="/dashboard/admin/manage-bookings"
+            className="block rounded px-3 py-2 hover:bg-gray-100"
+          >
+            Manage Bookings
+          </Link>
+        </>
+      )}
+
+      {user?.role === "lawyer" && (
+        <>
+          <Link
+            href="/dashboard/lawyer/my-services"
+            className="block rounded px-3 py-2 hover:bg-gray-100"
+          >
+            My Services
+          </Link>
+
+          <Link
+            href="/dashboard/lawyer/appointments"
+            className="block rounded px-3 py-2 hover:bg-gray-100"
+          >
+            Appointments
+          </Link>
+
+          <Link
+            href="/dashboard/lawyer/profile"
+            className="block rounded px-3 py-2 hover:bg-gray-100"
+          >
+            Profile
+          </Link>
+        </>
+      )}
+
+      {user?.role === "user" && (
+        <>
+          <Link
+            href="/dashboard/user/my-bookings"
+            className="block rounded px-3 py-2 hover:bg-gray-100"
+          >
+            My Bookings
+          </Link>
+
+          <Link
+            href="/dashboard/user/favorites"
+            className="block rounded px-3 py-2 hover:bg-gray-100"
+          >
+            Favorites
+          </Link>
+
+          <Link
+            href="/dashboard/user/profile"
+            className="block rounded px-3 py-2 hover:bg-gray-100"
+          >
+            Profile
+          </Link>
+        </>
+      )}
+       </div>
+      </li>
+      )}
+
           </ul>
 
           {/* Search Bar */}
