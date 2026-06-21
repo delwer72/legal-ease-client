@@ -1,10 +1,20 @@
+import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { auth } from "./auth";
 
- export const getTokenServer = async () => {
-  const { token } = await auth.api.getToken({
-    headers: await headers(),
-  });
+export const getTokenServer = async () => {
+  try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user?.email) return null;
 
-  return token || null;
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/jwt`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: session.user.email }),
+      cache: "no-store",
+    });
+    const data = await res.json();
+    return data.token;
+  } catch {
+    return null;
+  }
 };

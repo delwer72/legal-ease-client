@@ -1,384 +1,245 @@
+"use client";
+import { useEffect, useState } from "react";
+import { signUp, signIn } from "@/lib/auth-client";
+import { saveUser } from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import toast from "react-hot-toast";
+import { FaBalanceScale, FaGoogle } from "react-icons/fa";
+import { FiEye, FiEyeOff, FiCheck, FiX } from "react-icons/fi";
 
-// 'use client';
+const passwordRules = [
+  { label: "At least 6 characters", test: (p) => p.length >= 6 },
+  { label: "At least one uppercase letter", test: (p) => /[A-Z]/.test(p) },
+  { label: "At least one number", test: (p) => /[0-9]/.test(p) },
+];
 
-// import { useState } from 'react';
-
-// import { Card, Separator } from '@heroui/react';
-
-// import { Button, Description, FieldError, Form, Input, Label, TextField } from '@heroui/react';
-
-// import { authClient } from '@/lib/auth-client';
-
-// import { useRouter } from 'next/navigation';
-
-// import { FcGoogle } from 'react-icons/fc';
-
-// import { FiEye, FiEyeOff } from 'react-icons/fi';
-
-// import { toast } from 'react-toastify';
-
-// const LoginPage = () => {
-//   const router = useRouter();
-
-//   // =========================
-//   // PASSWORD SHOW / HIDE
-//   // =========================
-
-//   const [showPassword, setShowPassword] = useState(false);
-
-//   // =========================
-//   // LOGIN SUBMIT
-//   // =========================
-
-//   const onSubmit = async (e) => {
-//     e.preventDefault();
-
-//     const formData = new FormData(e.currentTarget);
-
-//     const user = Object.fromEntries(formData.entries());
-
-//     try {
-//       const { data, error } = await authClient.signIn.email({
-//         email: user.email,
-//         password: user.password,
-//       });
-
-//       if (data) {
-//         toast.success(`Welcome Back ${data?.user?.name || ''} 🎉`);
-
-      
-
-//         router.push('/');
-//         return;
-//       }
-
-//       // =========================
-//       // ERROR HANDLING
-//       // =========================
-
-//       if (error) {
-//         // WRONG PASSWORD
-
-//         if (error.message?.toLowerCase().includes('password')) {
-//           toast.error('Incorrect password. Please try again.');
-//         }
-
-//         // USER NOT FOUND
-//         else if (error.message?.toLowerCase().includes('user')) {
-//           toast.error('No account found with this email.');
-//         }
-
-//         // INVALID EMAIL
-//         else if (error.message?.toLowerCase().includes('email')) {
-//           toast.error('Please enter a valid email address.');
-//         }
-
-//         // DEFAULT ERROR
-//         else {
-//           toast.error(error.message || 'Login failed');
-//         }
-//       }
-//     } catch (err) {
-//       console.log(err);
-
-//       toast.error('Something went wrong. Please try again.');
-//     }
-//   };
-
-//   const handleGoogleSignin = async () => {
-//     try {
-//       const { data } = await authClient.signIn.social({
-//         provider: 'google',
-//       });
-
-//       if (data?.user?.email) {
-        
-//       }
-
-//       toast.success('Google Login Successful 🎉');
-
-//       router.push('/');
-//     } catch (error) {
-//       console.log(error);
-//       toast.error('Google Login Failed');
-//     }
-//   };
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-5">
-//       <Card className="w-full max-w-md p-8 shadow-xl border rounded-2xl">
-//         {/* HEADER */}
-
-//         <div className="text-center mb-6">
-//           <h1 className="text-3xl font-bold text-cyan-600">Welcome Back</h1>
-
-//           <p className="text-gray-500 mt-2">Login to your account</p>
-//         </div>
-
-//         {/* FORM */}
-
-//         <Form onSubmit={onSubmit} className="flex flex-col gap-5">
-//           {/* EMAIL */}
-
-//           <TextField
-//             isRequired
-//             name="email"
-//             type="email"
-//             validate={(value) => {
-//               if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
-//                 return 'Please enter a valid email address';
-//               }
-
-//               return null;
-//             }}
-//           >
-//             <Label>Email</Label>
-
-//             <Input placeholder="john@example.com" className="rounded-xl" />
-
-//             <FieldError />
-//           </TextField>
-
-//           {/* PASSWORD */}
-
-//           <TextField
-//             isRequired
-//             minLength={8}
-//             name="password"
-//             validate={(value) => {
-//               if (value.length < 8) {
-//                 return 'Password must be at least 8 characters';
-//               }
-
-//               if (!/[A-Z]/.test(value)) {
-//                 return 'Password must contain at least one uppercase letter';
-//               }
-
-//               if (!/[0-9]/.test(value)) {
-//                 return 'Password must contain at least one number';
-//               }
-
-//               return null;
-//             }}
-//           >
-//             <Label>Password</Label>
-
-//             <div className="relative w-full">
-//               <Input
-//                 type={showPassword ? 'text' : 'password'}
-//                 placeholder="Enter your password"
-//                 className="rounded-xl pr-12"
-//               />
-
-//               {/* SHOW / HIDE BUTTON */}
-
-//               <button
-//                 type="button"
-//                 onClick={() => setShowPassword(!showPassword)}
-//                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-xl"
-//               >
-//                 {showPassword ? <FiEyeOff /> : <FiEye />}
-//               </button>
-//             </div>
-
-//             <Description>Must be at least 8 characters with 1 uppercase and 1 number</Description>
-
-//             <FieldError />
-//           </TextField>
-
-//           {/* FORGOT PASSWORD */}
-
-//           <div className="text-center -mt-2">
-//             <span className="text-sm font-medium text-cyan-600 hover:underline">
-//               Forgot Password?
-//             </span>
-//           </div>
-
-//           {/* LOGIN BUTTON */}
-
-//           <Button
-//             className="w-full bg-cyan-500 hover:bg-cyan-600 text-white rounded-xl py-6 text-lg font-semibold"
-//             type="submit"
-//           >
-//             Login
-//           </Button>
-//         </Form>
-
-//         {/* DIVIDER */}
-
-//         <div className="flex justify-center items-center gap-3 my-6">
-//           <Separator />
-
-//           <div className="whitespace-nowrap text-gray-500 text-sm">OR</div>
-
-//           <Separator />
-//         </div>
-
-//         {/* GOOGLE LOGIN */}
-
-//         <Button
-//           onClick={handleGoogleSignin}
-//           variant="bordered"
-//           className="w-full rounded-xl py-6 text-base font-medium"
-//         >
-//           <FcGoogle className="text-2xl" />
-//           Sign in with Google
-//         </Button>
-//       </Card>
-//     </div>
-//   );
-// };
-
-// export default LoginPage;
-'use client';
-
-import { FcGoogle } from 'react-icons/fc';
-import { Card, Separator } from '@heroui/react';
-import { Button, Description, FieldError, Form, Input, Label, TextField } from '@heroui/react';
-
-import { authClient } from '@/lib/auth-client';
-import { useRouter } from 'next/navigation';
-
-const SignUpPage = () => {
+export default function SignUp() {
+  const [form, setForm] = useState({
+    name: "", email: "", password: "", confirmPassword: "", role: "user",
+  });
+  const [showPass, setShowPass] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { dbUser, loading: authLoading } = useAuth();
 
-  const onSubmit = async (e) => {
+  useEffect(() => {
+    if (!authLoading && dbUser) {
+      router.push("/");
+    }
+  }, [authLoading, dbUser, router]);
+
+  const handleChange = (e) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+  };
+
+  const validate = () => {
+    const newErrors = {};
+    if (!form.name.trim()) newErrors.name = "Full name is required";
+    else if (form.name.trim().length < 3) newErrors.name = "Name must be at least 3 characters";
+
+    if (!form.email.trim()) newErrors.email = "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) newErrors.email = "Enter a valid email address";
+
+    if (!form.password) newErrors.password = "Password is required";
+    else if (form.password.length < 6) newErrors.password = "Password must be at least 6 characters";
+    else if (!/[A-Z]/.test(form.password)) newErrors.password = "Password must include an uppercase letter";
+    else if (!/[0-9]/.test(form.password)) newErrors.password = "Password must include a number";
+
+    if (!form.confirmPassword) newErrors.confirmPassword = "Please confirm your password";
+    else if (form.password !== form.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
+
+    return newErrors;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const formData = new FormData(e.currentTarget);
-    const user = Object.fromEntries(formData.entries());
-
-    try {
-      const { data, error } = await authClient.signUp.email({
-        email: user.email,
-        password: user.password,
-        name: user.name,
-        image: user.image || '',
-      });
-
-      if (error) {
-        alert(error.message || 'Signup failed');
-        return;
-      }
-
-      if (data) {
-        // optional: small delay for better UX
-        setTimeout(() => {
-          router.push('/login');
-        }, 300);
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Something went wrong!');
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
     }
+    setLoading(true);
+    const { error } = await signUp.email({
+      name: form.name,
+      email: form.email,
+      password: form.password,
+    });
+    if (error) {
+      toast.error(error.message || "Registration failed");
+      if (error.message?.toLowerCase().includes("email")) {
+        setErrors({ email: "This email is already registered" });
+      }
+      setLoading(false);
+      return;
+    }
+    await saveUser({ name: form.name, email: form.email, image: "", role: form.role });
+    toast.success("Account created successfully!");
+    router.push("/");
   };
 
-  const handleGoogleSignin = async () => {
-    try {
-      await authClient.signIn.social({
-        provider: 'google',
-      });
-    } catch (err) {
-      console.error(err);
-      alert('Google sign in failed');
-    }
-  };
+  const handleGoogle = () => signIn.social({ provider: "google", callbackURL: "/" });
+
+  if (authLoading || dbUser) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="min-h-screen items-center justify-center bg-gray-50 px-4">
-        <div className="text-center my-3">
-          <h1 className="text-2xl font-bold">Create Account</h1>
-          <p>Find the right tutor, start learning smarter with Tutor Finder</p>
+    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] to-[#1e293b] flex items-center justify-center p-4">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-10">
+        <div className="text-center mb-6">
+          <div className="flex items-center justify-center gap-2 text-[#0f172a] text-2xl font-bold mb-2">
+            <FaBalanceScale className="text-yellow-400 text-3xl" />
+            <span>Legal<span className="text-yellow-400">Ease</span></span>
+          </div>
+          <h2 className="text-2xl font-bold text-[#0f172a]">Create Account</h2>
+          <p className="text-gray-500 text-sm mt-1">Join LegalEase today</p>
         </div>
 
-        <Card className="border rounded-none p-4 max-w-7xl mx-auto">
-          <Form onSubmit={onSubmit} className="flex w-96 flex-col gap-4">
-            {/* Name */}
-            <TextField isRequired name="name" type="text">
-              <Label>Name</Label>
-              <Input placeholder="Enter your name" />
-              <FieldError />
-            </TextField>
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+          {/* Name */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+            <input
+              name="name"
+              type="text"
+              value={form.name}
+              onChange={handleChange}
+              placeholder="John Doe"
+              className={`w-full border rounded-xl px-4 py-3 outline-none transition text-sm ${
+                errors.name ? "border-red-400 bg-red-50" : "border-gray-200 focus:border-yellow-400"
+              }`}
+            />
+            {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+          </div>
 
-            {/* Photo URL */}
-            <TextField name="image" type="url">
-              <Label>Photo URL</Label>
-              <Input placeholder="Photo URL (optional)" />
-              <FieldError />
-            </TextField>
-
-            {/* Email */}
-            <TextField
-              isRequired
+          {/* Email */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input
               name="email"
               type="email"
-              validate={(value) => {
-                if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
-                  return 'Please enter a valid email address';
-                }
-                return null;
-              }}
-            >
-              <Label>Email</Label>
-              <Input placeholder="john@example.com" />
-              <FieldError />
-            </TextField>
+              value={form.email}
+              onChange={handleChange}
+              placeholder="you@example.com"
+              className={`w-full border rounded-xl px-4 py-3 outline-none transition text-sm ${
+                errors.email ? "border-red-400 bg-red-50" : "border-gray-200 focus:border-yellow-400"
+              }`}
+            />
+            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+          </div>
 
-            {/* Password */}
-            <TextField
-              isRequired
-              name="password"
-              type="password"
-              validate={(value) => {
-                if (value.length < 6) {
-                  return 'Minimum 6 characters required';
-                }
-                if (!/[A-Z]/.test(value)) {
-                  return 'Must contain 1 uppercase letter';
-                }
-                if (!/[a-z]/.test(value)) {
-                  return 'Must contain 1 lowercase letter';
-                }
-                return null;
-              }}
-            >
-              <Label>Password</Label>
-              <Input placeholder="Enter password" />
+          {/* Password */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <div className="relative">
+              <input
+                name="password"
+                type={showPass ? "text" : "password"}
+                value={form.password}
+                onChange={handleChange}
+                placeholder="Min 6 characters"
+                className={`w-full border rounded-xl px-4 py-3 pr-11 outline-none transition text-sm ${
+                  errors.password ? "border-red-400 bg-red-50" : "border-gray-200 focus:border-yellow-400"
+                }`}
+              />
+              <button type="button" onClick={() => setShowPass(!showPass)}
+                className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600">
+                {showPass ? <FiEyeOff /> : <FiEye />}
+              </button>
+            </div>
+            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+            {/* Password strength checklist */}
+            {form.password && (
+              <div className="mt-2 space-y-1">
+                {passwordRules.map((rule) => (
+                  <div key={rule.label} className={`flex items-center gap-2 text-xs ${rule.test(form.password) ? "text-green-600" : "text-gray-400"}`}>
+                    {rule.test(form.password) ? <FiCheck className="text-green-500" /> : <FiX className="text-gray-300" />}
+                    {rule.label}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-              <Description>6+ chars, 1 uppercase, 1 lowercase</Description>
-              <FieldError />
-            </TextField>
+          {/* Confirm Password */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+            <div className="relative">
+              <input
+                name="confirmPassword"
+                type={showConfirm ? "text" : "password"}
+                value={form.confirmPassword}
+                onChange={handleChange}
+                placeholder="Re-enter your password"
+                className={`w-full border rounded-xl px-4 py-3 pr-11 outline-none transition text-sm ${
+                  errors.confirmPassword ? "border-red-400 bg-red-50" :
+                  form.confirmPassword && form.password === form.confirmPassword
+                    ? "border-green-400 bg-green-50"
+                    : "border-gray-200 focus:border-yellow-400"
+                }`}
+              />
+              <button type="button" onClick={() => setShowConfirm(!showConfirm)}
+                className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600">
+                {showConfirm ? <FiEyeOff /> : <FiEye />}
+              </button>
+            </div>
+            {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
+            {form.confirmPassword && form.password === form.confirmPassword && (
+              <p className="text-green-600 text-xs mt-1 flex items-center gap-1"><FiCheck /> Passwords match</p>
+            )}
+          </div>
 
-            <Button className="rounded-none w-full bg-cyan-500" type="submit">
-              Create Account
-            </Button>
-          </Form>
+          {/* Role */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Register as</label>
+            <div className="grid grid-cols-2 gap-3">
+              {["user", "lawyer"].map((role) => (
+                <button key={role} type="button"
+                  onClick={() => setForm((prev) => ({ ...prev, role }))}
+                  className={`py-3 rounded-xl font-semibold text-sm border-2 transition ${
+                    form.role === role
+                      ? "border-yellow-400 bg-yellow-50 text-yellow-700"
+                      : "border-gray-200 hover:border-yellow-200 text-gray-600"
+                  }`}
+                >
+                  {role === "user" ? "👤 Client" : "⚖️ Lawyer"}
+                </button>
+              ))}
+            </div>
+          </div>
 
-          {/* Divider */}
-          {/* <div className="flex items-center gap-3 my-4">
-            <Separator />
-            <div className="whitespace-nowrap">Or sign up with</div>
-            <Separator />
-          </div> */}
-          <div className="flex items-center gap-3 my-4">
-  <div className="h-px flex-1 bg-gray-300" />
-  
-  <div className="whitespace-nowrap text-sm text-gray-500">
-    Or sign up with
-  </div>
+          <button type="submit" disabled={loading}
+            className="w-full bg-[#0f172a] text-yellow-400 py-3 rounded-full font-bold hover:bg-yellow-400 hover:text-[#0f172a] transition disabled:opacity-60 mt-2">
+            {loading ? "Creating Account..." : "Create Account"}
+          </button>
+        </form>
 
-  <div className="h-px flex-1 bg-gray-300" />
-</div>
+        <div className="flex items-center gap-3 my-5">
+          <div className="flex-1 h-px bg-gray-200" />
+          <span className="text-gray-400 text-sm">or</span>
+          <div className="flex-1 h-px bg-gray-200" />
+        </div>
 
-          {/* Google */}
-          <Button onClick={handleGoogleSignin} variant="outline" className="w-full rounded-none">
-            <FcGoogle /> Sign up with Google
-          </Button>
-        </Card>
+        <button onClick={handleGoogle}
+          className="w-full border border-gray-200 py-3 rounded-full font-semibold flex items-center justify-center gap-3 hover:bg-gray-50 transition text-sm">
+          <FaGoogle className="text-red-500" />
+          Continue with Google
+        </button>
+
+        <p className="text-center text-gray-500 text-sm mt-6">
+          Already have an account?{" "}
+          <Link href="/signin" className="text-yellow-500 font-semibold hover:underline">Sign In</Link>
+        </p>
       </div>
     </div>
   );
-};
-
-export default SignUpPage;
-
+}

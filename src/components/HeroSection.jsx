@@ -1,192 +1,176 @@
 "use client";
-
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import useEmblaCarousel from "embla-carousel-react";
-import Autoplay from "embla-carousel-autoplay";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ShieldCheck,
-  Scale,
-  Users,
-} from "lucide-react";
+import { motion } from "framer-motion";
 import Link from "next/link";
-
-const slides = [
-  {
-    title: "Find Trusted Lawyers For Every Legal Need",
-    subtitle:
-      "Connect with verified legal professionals specializing in family law, criminal defense, corporate law, immigration, and more.",
-    image:
-      "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=1600&auto=format&fit=crop",
-  },
-  {
-    title: "Hire Experienced Legal Experts With Confidence",
-    subtitle:
-      "Browse lawyer profiles, compare expertise, and book consultations securely through LegalEase.",
-    image:
-      "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=1600&auto=format&fit=crop",
-  },
-  {
-    title: "Grow Your Legal Practice And Reach More Clients",
-    subtitle:
-      "Join LegalEase as a verified lawyer and connect with people actively looking for legal services.",
-    image:
-      "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1600&auto=format&fit=crop",
-  },
-];
+import {
+  FaGavel,
+  FaBalanceScale,
+  FaArrowRight,
+  FaCheckCircle,
+  FaStar,
+  FaUsers,
+  FaClock,
+} from "react-icons/fa";
 
 export default function HeroSection() {
-  const autoplay = useRef(
-    Autoplay({
-      delay: 5000,
-      stopOnInteraction: false,
-      stopOnMouseEnter: true,
-    })
-  );
-
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    { loop: true },
-    [autoplay.current]
-  );
-
-  const [selectedIndex, setSelectedIndex] = useState(0);
-
-  const onSelect = useCallback(() => {
-    if (!emblaApi) return;
-    setSelectedIndex(emblaApi.selectedScrollSnap());
-  }, [emblaApi]);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-
-    onSelect();
-    emblaApi.on("select", onSelect);
-
-    return () => {
-      emblaApi.off("select", onSelect);
-    };
-  }, [emblaApi, onSelect]);
-
   return (
-    <section className="relative overflow-hidden">
-      <div ref={emblaRef} className="overflow-hidden">
-        <div className="flex">
+    <section className="relative bg-[#070b14] min-h-[95vh] flex items-center overflow-hidden">
+      {/* Dot grid background */}
+      <div
+        className="absolute inset-0 opacity-40"
+        style={{
+          backgroundImage:
+            "radial-gradient(rgba(148,163,184,0.15) 1px, transparent 1px)",
+          backgroundSize: "26px 26px",
+        }}
+      />
 
-          {slides.map((slide, index) => (
-            <div
-              key={index}
-              className="min-w-0 flex-[0_0_100%]"
-            >
-              <div className="relative min-h-[700px]">
+      {/* Glow blobs */}
+      <div className="absolute top-0 left-0 w-[28rem] h-[28rem] bg-blue-500/10 rounded-full blur-[100px]" />
+      <div className="absolute bottom-0 right-0 w-[28rem] h-[28rem] bg-cyan-400/10 rounded-full blur-[100px]" />
 
-                {/* Background Image */}
-                <img
-                  src={slide.image}
-                  alt={slide.title}
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
+      <div className="relative max-w-7xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-16 items-center">
+        {/* Left Text */}
+        <div>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <span className="inline-flex items-center gap-2 bg-white/5 border border-white/10 text-blue-300 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide uppercase">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+              500+ Verified Lawyers Trust LegalEase
+            </span>
 
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-blue-950/80 to-slate-900/60" />
+            <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-[1.1] mt-5">
+              Find & Hire <br />
+              <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-400 bg-clip-text text-transparent">
+                Expert Legal
+              </span>{" "}
+              <br />
+              Counsel
+            </h1>
 
-                {/* Content */}
-                <div className="relative z-10 mx-auto flex min-h-[700px] max-w-7xl items-center px-6">
-                  <div className="max-w-3xl text-white">
-                    <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm backdrop-blur">
-                      ⚖️ Trusted Legal Marketplace
-                    </span>
+            <p className="text-gray-400 mt-5 text-lg max-w-md">
+              Connect with <span className="text-white font-semibold">verified lawyers</span> for criminal, corporate, family, and more.{" "}
+              <span className="text-cyan-300">Fast, secure, and affordable.</span>
+            </p>
 
-                    <h1 className="mt-6 text-4xl font-extrabold leading-tight md:text-6xl">
-                      {slide.title}
-                    </h1>
+            <div className="flex flex-wrap gap-4 mt-8">
+              <Link
+                href="/lawyers"
+                className="bg-gradient-to-r from-blue-500 to-cyan-400 text-[#070b14] px-8 py-3 rounded-full font-bold text-lg hover:opacity-90 transition shadow-lg shadow-blue-500/30 flex items-center gap-2"
+              >
+                Browse Lawyers <FaArrowRight />
+              </Link>
+              <Link
+                href="/signup"
+                className="border border-white/15 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-white/5 transition"
+              >
+                Get Started
+              </Link>
+            </div>
+          </motion.div>
 
-                    <p className="mt-6 max-w-2xl text-lg text-gray-200 md:text-xl">
-                      {slide.subtitle}
-                    </p>
+          {/* Stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="flex flex-wrap gap-8 mt-12 pt-8 border-t border-white/10"
+          >
+            {[
+              { label: "Expert Lawyers", value: "500+", color: "text-blue-400" },
+              { label: "Cases Solved", value: "10K+", color: "text-green-400" },
+              { label: "Happy Clients", value: "8K+", color: "text-purple-400" },
+            ].map((stat) => (
+              <div key={stat.label}>
+                <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
+                <p className="text-gray-500 text-sm">{stat.label}</p>
+              </div>
+            ))}
+          </motion.div>
 
-                    <div className="mt-8 flex flex-wrap gap-4">
-                      <Link
-                        href="/lawyers"
-                        className="rounded-xl bg-white px-6 py-3 font-semibold text-blue-700 transition hover:scale-105"
-                      >
-                        Browse Lawyers
-                      </Link>
+          {/* Trust badges */}
+          <div className="flex flex-wrap gap-3 mt-6">
+            {["Verified profiles", "Secure payments", "24/7 support"].map((item) => (
+              <span
+                key={item}
+                className="flex items-center gap-1.5 text-gray-400 text-xs border border-white/10 rounded-full px-3 py-1.5"
+              >
+                <FaCheckCircle className="text-cyan-400" /> {item}
+              </span>
+            ))}
+          </div>
+        </div>
 
-                      <Link
-                        href="/signup"
-                        className="rounded-xl border border-white px-6 py-3 font-semibold text-white transition hover:bg-white hover:text-blue-700"
-                      >
-                        Become a Lawyer
-                      </Link>
-                    </div>
+        {/* Right Visual */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.85 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8 }}
+          className="hidden md:flex justify-center relative"
+        >
+          <div className="relative w-full max-w-sm">
+            <div className="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-white/10 rounded-[2.5rem] aspect-square flex items-center justify-center shadow-2xl">
+              <FaBalanceScale className="text-yellow-400 text-9xl drop-shadow-[0_0_25px_rgba(250,204,21,0.35)]" />
+            </div>
 
-                    {/* Stats */}
-                    <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-3">
-                      <div className="rounded-2xl border border-white/10 bg-white/10 p-5 backdrop-blur">
-                        <Users className="mb-2" />
-                        <h3 className="text-3xl font-bold">500+</h3>
-                        <p className="text-sm text-gray-300">
-                          Verified Lawyers
-                        </p>
-                      </div>
-
-                      <div className="rounded-2xl border border-white/10 bg-white/10 p-5 backdrop-blur">
-                        <Scale className="mb-2" />
-                        <h3 className="text-3xl font-bold">10K+</h3>
-                        <p className="text-sm text-gray-300">
-                          Legal Consultations
-                        </p>
-                      </div>
-
-                      <div className="rounded-2xl border border-white/10 bg-white/10 p-5 backdrop-blur">
-                        <ShieldCheck className="mb-2" />
-                        <h3 className="text-3xl font-bold">98%</h3>
-                        <p className="text-sm text-gray-300">
-                          Client Satisfaction
-                        </p>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-
+            {/* Top-left badge */}
+            <div className="absolute -top-5 -left-6 bg-[#0f172a] border border-white/10 rounded-2xl shadow-xl px-4 py-3 flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-blue-500 flex items-center justify-center text-white">
+                <FaGavel />
+              </div>
+              <div>
+                <p className="text-white font-bold text-sm leading-none">500+</p>
+                <p className="text-gray-400 text-xs mt-1">Verified Lawyers</p>
               </div>
             </div>
-          ))}
 
-        </div>
-      </div>
+            {/* Top-right badge */}
+            <div className="absolute -top-5 -right-6 bg-[#1e293b] border border-white/10 rounded-2xl shadow-xl px-4 py-3 flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-purple-500 flex items-center justify-center text-white">
+                <FaClock />
+              </div>
+              <div>
+                <p className="text-white font-bold text-sm leading-none">24/7</p>
+                <p className="text-gray-400 text-xs mt-1">Support</p>
+              </div>
+            </div>
 
-      {/* Prev Button */}
-      <button
-        onClick={() => emblaApi?.scrollPrev()}
-        className="absolute left-4 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white p-3 shadow-xl transition hover:scale-110"
-      >
-        <ChevronLeft />
-      </button>
+            {/* Bottom-left badge */}
+            <div className="absolute -bottom-5 -left-6 bg-[#0f172a] border border-white/10 rounded-2xl shadow-xl px-4 py-3 flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-green-500 flex items-center justify-center text-white">
+                <FaCheckCircle />
+              </div>
+              <div>
+                <p className="text-white font-bold text-sm leading-none">10K+</p>
+                <p className="text-gray-400 text-xs mt-1">Cases Solved</p>
+              </div>
+            </div>
 
-      {/* Next Button */}
-      <button
-        onClick={() => emblaApi?.scrollNext()}
-        className="absolute right-4 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white p-3 shadow-xl transition hover:scale-110"
-      >
-        <ChevronRight />
-      </button>
+            {/* Bottom-right badge */}
+            <div className="absolute -bottom-5 -right-6 bg-[#1e293b] border border-white/10 rounded-2xl shadow-xl px-4 py-3 flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center text-white">
+                <FaStar />
+              </div>
+              <div>
+                <p className="text-white font-bold text-sm leading-none">4.9/5</p>
+                <p className="text-gray-400 text-xs mt-1">Client Rating</p>
+              </div>
+            </div>
 
-      {/* Dots */}
-      <div className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 gap-2">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => emblaApi?.scrollTo(index)}
-            className={`h-3 rounded-full transition-all ${
-              selectedIndex === index
-                ? "w-8 bg-white"
-                : "w-3 bg-white/50"
-            }`}
-          />
-        ))}
+            {/* Floating mid-right badge */}
+            <div className="absolute top-1/2 -right-10 -translate-y-1/2 bg-[#0f172a] border border-white/10 rounded-full shadow-xl pl-2 pr-4 py-2 flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-red-500 flex items-center justify-center text-white">
+                <FaUsers />
+              </div>
+              <div>
+                <p className="text-white font-bold text-sm leading-none">8K+</p>
+                <p className="text-gray-400 text-xs mt-1">Happy Clients</p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

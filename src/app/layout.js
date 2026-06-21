@@ -6,6 +6,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { ToastContainer } from "react-toastify";
+import { AuthProvider } from "@/context/AuthContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,13 +21,15 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${inter.className} h-full antialiased`}>
       <body>
-        <Navbar />
-        <main className=" px-2 min-h-screen">
-          {children}
-        </main>
-         <ToastContainer position="top-right" />
+        <AuthProvider>
+          <Navbar />
+          <main className="min-h-screen">
+            {children}
+          </main>
+          <ToastContainer position="top-right" />
 
-        {/* <Footer/> */}
+          <Footer/>
+        </AuthProvider>
       </body>
     </html>
   );

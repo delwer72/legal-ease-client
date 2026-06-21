@@ -3,14 +3,13 @@ export const imageUpload = async (image) => {
   formData.append("image", image);
 
   const res = await fetch(
-    `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_KEY}`,
+    `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`,
     {
       method: "POST",
       body: formData,
-    },
+    }
   );
 
   const data = await res.json();
-  // console.log(data)
-  return data.data;
+  return data.data.display_url;
 };

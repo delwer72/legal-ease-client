@@ -1,21 +1,29 @@
-import DashboardSidebar from '@/components/dashboard/DasboardSidebar'
+"use client";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import DashboardSidebar from "@/components/DashboardSidebar";
+
 export default function DashboardLayout({ children }) {
+  const { dbUser, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !dbUser) router.push("/signin");
+  }, [dbUser, loading, router]);
+
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="w-12 h-12 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+
+  if (!dbUser) return null;
+
   return (
-    <div className="flex h-screen bg-background">
-      <div className="flex flex-1 overflow-hidden">
-        {/* sidebar */}
-      <DashboardSidebar/>
-
-        <div className="flex-1 overflow-y-auto">
-          {/* navbar */}
-           <div className="border border-b-1  p-3 w-full ">Navbar</div>
-          <main className="p-5">
-           
-
-            {children}</main>
-            
-        </div>
-      </div>
+    <div className="flex min-h-screen bg-gray-50">
+      <DashboardSidebar />
+      <main className="flex-1 p-6 md:p-10 overflow-auto">{children}</main>
     </div>
   );
 }
