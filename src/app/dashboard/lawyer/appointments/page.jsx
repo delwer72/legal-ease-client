@@ -109,3 +109,4 @@ export default function LawyerAppointments() {
     </div>
   );
 }
+export const dynamic = 'force-dynamic'

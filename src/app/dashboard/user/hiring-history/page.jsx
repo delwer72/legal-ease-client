@@ -94,3 +94,4 @@ export default function UserHiringHistory() {
     </div>
   );
 }
+export const dynamic = 'force-dynamic'

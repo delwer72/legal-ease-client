@@ -11,7 +11,8 @@ export default function Home() {
       <FeaturedLawyers />
       <LegalCategories />
       <TopLawyers />
-      {/* <Footer/> */}
+      
     </div>
   );
 }
+export const dynamic = 'force-dynamic'

@@ -94,3 +94,4 @@ export default function MyComments() {
     </div>
   );
 }
+export const dynamic = 'force-dynamic'

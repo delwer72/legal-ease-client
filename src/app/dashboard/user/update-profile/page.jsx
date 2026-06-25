@@ -192,3 +192,4 @@ export default function UpdateProfile() {
     </div>
   );
 }
+export const dynamic = 'force-dynamic'

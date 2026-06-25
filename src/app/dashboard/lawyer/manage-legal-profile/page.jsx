@@ -465,3 +465,4 @@ export default function ManageLegalProfile() {
     </div>
   );
 }
+export const dynamic = 'force-dynamic'

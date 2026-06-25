@@ -160,3 +160,4 @@ export default function SignIn() {
     </div>
   );
 }
+export const dynamic = 'force-dynamic'

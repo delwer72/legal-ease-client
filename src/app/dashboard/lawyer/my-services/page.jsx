@@ -196,3 +196,4 @@ export default function MyServices() {
     </div>
   );
 }
+export const dynamic = 'force-dynamic'

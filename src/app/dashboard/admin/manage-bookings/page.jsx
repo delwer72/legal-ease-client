@@ -75,3 +75,4 @@ export default function ManageBookings() {
     </div>
   );
 }
+export const dynamic = 'force-dynamic'

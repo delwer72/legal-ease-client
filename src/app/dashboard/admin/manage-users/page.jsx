@@ -92,3 +92,4 @@ export default function ManageUsers() {
     </div>
   );
 }
+export const dynamic = 'force-dynamic'

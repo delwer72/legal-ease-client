@@ -1,5 +1,6 @@
+
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { getLawyers } from "@/lib/api";
 import LawyerCard from "@/components/LawyerCard";
@@ -7,8 +8,10 @@ import { FiSearch } from "react-icons/fi";
 
 const specializations = ["All", "Criminal", "Corporate", "Family", "Tax", "Property", "Immigration", "Civil", "Labor"];
 
-export default function BrowseLawyers() {
+function BrowseLawyers() {
   const searchParams = useSearchParams();
+  console.log("BrowseLawyers Component Rendered Successfully!"); // এখন কনসোল লগ কাজ করবে
+  
   const [lawyers, setLawyers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
@@ -26,15 +29,25 @@ export default function BrowseLawyers() {
     setLoading(true);
     const params = { ...filters, page, limit: 8 };
     Object.keys(params).forEach((k) => !params[k] && delete params[k]);
-    const data = await getLawyers(params);
-    setLawyers(data.lawyers || []);
-    setTotal(data.total || 0);
-    setLoading(false);
+    try {
+      const data = await getLawyers(params);
+      setLawyers(data.lawyers || []);
+      setTotal(data.total || 0);
+    } catch (error) {
+      console.error("Error fetching lawyers:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  useEffect(() => { fetchLawyers(); }, [filters, page]);
+  useEffect(() => { 
+    fetchLawyers(); 
+  }, [filters, page]);
 
-  const handleFilter = (key, val) => { setFilters((prev) => ({ ...prev, [key]: val })); setPage(1); };
+  const handleFilter = (key, val) => { 
+    setFilters((prev) => ({ ...prev, [key]: val })); 
+    setPage(1); 
+  };
 
   const totalPages = Math.ceil(total / 8);
 
@@ -118,58 +131,57 @@ export default function BrowseLawyers() {
       )}
 
       {/* Pagination */}
-      {/* Pagination */}
-{totalPages > 1 && (
-  <div className="flex justify-center items-center gap-2 mt-10">
-    {/* Previous */}
-    <button
-      onClick={() => setPage((p) => Math.max(1, p - 1))}
-      disabled={page === 1}
-      className="px-4 py-2 rounded-full text-sm font-semibold border border-gray-200 hover:border-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed transition"
-    >
-      ← Prev
-    </button>
-
-    {/* Page Numbers */}
-    {[...Array(totalPages)].map((_, i) => {
-      const pageNum = i + 1;
-      // show first, last, and pages around current
-      if (
-        pageNum === 1 ||
-        pageNum === totalPages ||
-        (pageNum >= page - 1 && pageNum <= page + 1)
-      ) {
-        return (
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-10">
           <button
-            key={i}
-            onClick={() => setPage(pageNum)}
-            className={`w-10 h-10 rounded-full font-semibold text-sm transition ${
-              page === pageNum
-                ? "bg-[#0f172a] text-yellow-400"
-                : "bg-white border border-gray-200 hover:border-yellow-400"
-            }`}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-4 py-2 rounded-full text-sm font-semibold border border-gray-200 hover:border-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed transition"
           >
-            {pageNum}
+            ← Prev
           </button>
-        );
-      }
-      // show dots
-      if (pageNum === page - 2 || pageNum === page + 2) {
-        return <span key={i} className="text-gray-400 text-sm">...</span>;
-      }
-      return null;
-    })}
 
-    {/* Next */}
-    <button
-      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-      disabled={page === totalPages}
-      className="px-4 py-2 rounded-full text-sm font-semibold border border-gray-200 hover:border-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed transition"
-    >
-      Next →
-    </button>
-  </div>
-)}
+          {[...Array(totalPages)].map((_, i) => {
+            const pageNum = i + 1;
+            if (pageNum === 1 || pageNum === totalPages || (pageNum >= page - 1 && pageNum <= page + 1)) {
+              return (
+                <button
+                  key={i}
+                  onClick={() => setPage(pageNum)}
+                  className={`w-10 h-10 rounded-full font-semibold text-sm transition ${
+                    page === pageNum ? "bg-[#0f172a] text-yellow-400" : "bg-white border border-gray-200 hover:border-yellow-400"
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            }
+            if (pageNum === page - 2 || pageNum === page + 2) {
+              return <span key={i} className="text-gray-400 text-sm">...</span>;
+            }
+            return null;
+          })}
+
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className="px-4 py-2 rounded-full text-sm font-semibold border border-gray-200 hover:border-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed transition"
+          >
+            Next →
+          </button>
+        </div>
+      )}
     </div>
   );
 }
+
+// মূল এক্সপোর্ট করা পেজ কম্পোনেন্ট (এটিতে return যোগ করা হয়েছে)
+export default function BrowseLawyerPage() {
+  return (
+    <Suspense fallback={<p>Loading... </p>}>  
+      <BrowseLawyers />
+    </Suspense>
+  );
+}
+
+export const dynamic = 'force-dynamic';

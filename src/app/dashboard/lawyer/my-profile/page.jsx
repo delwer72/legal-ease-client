@@ -191,3 +191,4 @@ export default function LawyerMyProfile() {
     </div>
   );
 }
+export const dynamic = 'force-dynamic'

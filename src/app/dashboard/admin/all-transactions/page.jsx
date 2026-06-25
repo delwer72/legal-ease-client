@@ -55,3 +55,4 @@ export default function AllTransactions() {
     </div>
   );
 }
+export const dynamic = 'force-dynamic'

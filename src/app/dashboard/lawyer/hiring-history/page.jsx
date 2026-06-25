@@ -75,3 +75,4 @@ export default function LawyerHiringHistory() {
     </div>
   );
 }
+export const dynamic = 'force-dynamic'

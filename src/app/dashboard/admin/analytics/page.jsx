@@ -43,3 +43,4 @@ export default function Analytics() {
     </div>
   );
 }
+export const dynamic = 'force-dynamic'
