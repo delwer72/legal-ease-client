@@ -105,7 +105,7 @@ export default function SignIn() {
             {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
 
-          {/* Password */}
+          {/* Password authantication*/}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
             <div className="relative">
